@@ -1,0 +1,15 @@
+digraph G {
+    // Define nodes
+    A;
+    B;
+    C;
+    D;
+
+    // Define directed edges
+    A -> B;
+    A -> D;
+    D -> B;
+    B -> C;
+    B -> D;
+    C -> D;
+}
