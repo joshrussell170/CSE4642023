@@ -1,4 +1,8 @@
+import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.model.Factory;
 import guru.nidi.graphviz.model.MutableGraph;
+import guru.nidi.graphviz.model.MutableNode;
+import guru.nidi.graphviz.model.Node;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -14,6 +18,11 @@ public class DOTParser {
         }
         catch(IOException e) {
             System.err.println("Error reading file" + e.getMessage());
+        }
+        catch(Exception ex){
+            System.err.println("Error parsing DOT file: " + ex.getMessage());
+            System.err.println("Ensure DOT File format is correct");
+            graph = null;
         }
         return graph;
     }
@@ -80,12 +89,60 @@ public class DOTParser {
         }
     }
 
+    public MutableGraph addNode(String label, MutableGraph graph){
+        if(graph != null){
+            //look for duplicates
+            boolean nodeExists = graph.nodes().stream().anyMatch(node -> node.name().toString().equals(label));
+            if(!nodeExists){
+                MutableNode newNode = Factory.mutNode(label);
+                newNode.addTo(graph);
+            }
+            else{
+                System.out.println("Node with label '" + label + "' already exists");
+            }
+        }
+        else{
+            System.err.println("Cannot add node due to parsing error (ensure graph was created)");
+        }
+        return graph;
+    }
+
+    public MutableGraph addNodes(String[] labels, MutableGraph graph){
+        for(String label : labels){
+            graph = addNode(label, graph);
+        }
+        return graph;
+    }
+
+
+
     public static void main(String[] args){
         System.out.println("Hello worlds");
         DOTParser parser = new DOTParser();
         MutableGraph myGraph = parser.parseGraph("/color.dot");
-        parser.toStringGraph(myGraph);
-        parser.outputGraph("src/main/resources/output.txt", myGraph);
+        if(myGraph != null){
+            //feature 1
+            /*parser.toStringGraph(myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);*/
+
+            //feature 2
+            String label = "B";
+            myGraph = parser.addNode(label, myGraph);
+            String[] labels = {"L", "I", "S", "T", "A"};
+            myGraph = parser.addNodes(labels, myGraph);
+            parser.toStringGraph(myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);
+
+
+
+            //feature 3
+
+            //feature 4
+
+        }
+        else{
+            System.err.println("!!Exiting due to parsing error!!");
+        }
 
     }
 }

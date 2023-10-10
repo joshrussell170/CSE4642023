@@ -4,12 +4,13 @@ digraph G {
     B;
     C;
     D;
+    E;
+    F;
 
     // Define directed edges
     A -> B;
-    A -> D;
-    D -> B;
     B -> C;
     B -> D;
-    C -> D;
+    E -> C;
+    D -> B;
 }

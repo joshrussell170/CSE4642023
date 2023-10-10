@@ -1,7 +1,13 @@
-Number of Nodes: 4
-Number of Edges: 6
+Number of Nodes: 10
+Number of Edges: 5
 Nodes and Edge Directions:
-C{}->D::
-D{}->B::
-A{}->B::,D::
+F{}->
+L{}->
+A{}->B::
+S{}->
 B{}->C::,D::
+I{}->
+C{}->
+D{}->B::
+E{}->C::
+T{}->
