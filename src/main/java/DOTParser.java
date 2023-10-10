@@ -47,6 +47,7 @@ public class DOTParser {
         graph.nodes().forEach(node -> {
             Set<String> neighbors = new HashSet<>();
             graph.edges().forEach(edge -> {
+                assert edge.from() != null;
                 if(edge.from().toString().equals(node.toString())){
                     neighbors.add(edge.to().toString());
                 }
@@ -68,6 +69,7 @@ public class DOTParser {
             graph.nodes().forEach(node -> {
                 Set<String> neighbors = new HashSet<>();
                 graph.edges().forEach(edge -> {
+                    assert edge.from() != null;
                     if (edge.from().equals(node)) {
                         neighbors.add(edge.to().toString());
                     }
