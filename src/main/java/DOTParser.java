@@ -3,6 +3,7 @@ import guru.nidi.graphviz.model.Factory;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.model.Node;
+import guru.nidi.graphviz.model.Link;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -114,6 +115,62 @@ public class DOTParser {
         return graph;
     }
 
+    public MutableGraph addEdge(String srcLabel, String dstLabel, MutableGraph graph){
+        if(graph != null){
+            MutableNode srcNode = null;
+            MutableNode dstNode = null;
+
+            //Check if source or destination label already exist
+            for(MutableNode node : graph.nodes()){
+                if(node.name().toString().equals(srcLabel)){
+                    srcNode = node;
+                    break;
+                }
+            }
+
+            for(MutableNode node : graph.nodes()){
+                if(node.name().toString().equals(dstLabel)){
+                    dstNode = node;
+                    break;
+                }
+            }
+
+            //if the label doesnt already exist, create it and add to graph
+            if(srcNode == null){
+                srcNode = Factory.mutNode(srcLabel);
+                srcNode.addTo(graph);
+            }
+
+            if(dstNode == null){
+                dstNode = Factory.mutNode(dstLabel);
+                dstNode.addTo(graph);
+            }
+
+            //check if edge already exists
+            boolean edgeExists = false;
+            for(Link link : srcNode.links()){
+                if(link.name().toString().equals(srcLabel + "--" + dstLabel)){
+                    edgeExists = true;
+                    break;
+                }
+            }
+
+            if(!edgeExists){
+                //create the edge link between the nodes
+                srcNode.addLink(dstNode);
+            }
+            else{
+                System.out.println("Edge already exists between " + srcLabel + " and " + dstLabel);
+            }
+
+
+        }
+        else{
+            System.err.println("Cannot add edge due to parsing error (ensure graph is parsed correctly");
+        }
+        return graph;
+    }
+
 
 
     public static void main(String[] args){
@@ -126,16 +183,24 @@ public class DOTParser {
             parser.outputGraph("src/main/resources/output.txt", myGraph);*/
 
             //feature 2
-            String label = "B";
+            /*String label = "B";
             myGraph = parser.addNode(label, myGraph);
             String[] labels = {"L", "I", "S", "T", "A"};
             myGraph = parser.addNodes(labels, myGraph);
             parser.toStringGraph(myGraph);
-            parser.outputGraph("src/main/resources/output.txt", myGraph);
-
+            parser.outputGraph("src/main/resources/output.txt", myGraph);*/
 
 
             //feature 3
+            myGraph = parser.addEdge("F", "E", myGraph);
+            myGraph = parser.addEdge("Z", "A", myGraph);
+            myGraph = parser.addEdge("W", "X", myGraph);
+            myGraph = parser.addEdge("A", "B", myGraph);
+            myGraph = parser.addEdge("A", "A", myGraph);
+            myGraph = parser.addEdge("Z", "A", myGraph);
+            parser.toStringGraph(myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);
+
 
             //feature 4
 
