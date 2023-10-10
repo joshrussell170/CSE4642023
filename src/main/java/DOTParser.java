@@ -1,10 +1,13 @@
 import guru.nidi.graphviz.attribute.Label;
+import guru.nidi.graphviz.engine.Format;
+import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Factory;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.model.Node;
 import guru.nidi.graphviz.model.Link;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -171,6 +174,37 @@ public class DOTParser {
         return graph;
     }
 
+    public void outputDOTGraph(String path, MutableGraph graph){
+        if(graph != null){
+            try(FileWriter writer = new FileWriter(path)){
+                writer.write(graph.toString());
+                System.out.println("Graph saved to " + path);
+            }
+            catch (IOException e){
+                System.err.println("Error writing to file: " + e.getMessage());
+            }
+        }
+        else{
+            System.err.println("Can't output DOT graph (ensure graph is actually created first)");
+        }
+    }
+
+    public void outputGraphics(String path, MutableGraph graph){
+        if(graph != null){
+            try{
+                File pngFile = new File(path);
+                Graphviz.fromGraph(graph)
+                        .width(800).render(Format.PNG).toFile(pngFile);
+                System.out.println("Graph saved as PNG to " + path);
+            }
+            catch(IOException e){
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+        else{
+            System.err.println("Can't output PNG (check to make sure graph was made)");
+        }
+    }
 
 
     public static void main(String[] args){
@@ -192,17 +226,20 @@ public class DOTParser {
 
 
             //feature 3
-            myGraph = parser.addEdge("F", "E", myGraph);
+            /*myGraph = parser.addEdge("F", "E", myGraph);
             myGraph = parser.addEdge("Z", "A", myGraph);
             myGraph = parser.addEdge("W", "X", myGraph);
             myGraph = parser.addEdge("A", "B", myGraph);
             myGraph = parser.addEdge("A", "A", myGraph);
             myGraph = parser.addEdge("Z", "A", myGraph);
             parser.toStringGraph(myGraph);
-            parser.outputGraph("src/main/resources/output.txt", myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);*/
 
 
             //feature 4
+            myGraph = parser.addEdge("Z", "A", myGraph);
+            parser.outputDOTGraph("src/main/resources/output.dot", myGraph);
+            parser.outputGraphics("src/main/resources/output.png", myGraph);
 
         }
         else{
