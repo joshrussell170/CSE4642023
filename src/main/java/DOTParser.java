@@ -212,8 +212,8 @@ public class DOTParser {
         MutableGraph myGraph = parser.parseGraph("/color.dot");
         if(myGraph != null){
             //feature 1
-            parser.toStringGraph(myGraph);
-            parser.outputGraph("src/main/resources/output.txt", myGraph);
+            /*parser.toStringGraph(myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);*/
 
             //feature 2
             /*String label = "B";
