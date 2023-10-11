@@ -1,10 +1,8 @@
-import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Factory;
 import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
-import guru.nidi.graphviz.model.Node;
 import guru.nidi.graphviz.model.Link;
 
 import java.io.File;
@@ -210,13 +208,12 @@ public class DOTParser {
 
 
     public static void main(String[] args){
-        System.out.println("Hello worlds");
         DOTParser parser = new DOTParser();
         MutableGraph myGraph = parser.parseGraph("/color.dot");
         if(myGraph != null){
             //feature 1
-            /*parser.toStringGraph(myGraph);
-            parser.outputGraph("src/main/resources/output.txt", myGraph);*/
+            parser.toStringGraph(myGraph);
+            parser.outputGraph("src/main/resources/output.txt", myGraph);
 
             //feature 2
             /*String label = "B";
@@ -239,14 +236,13 @@ public class DOTParser {
 
 
             //feature 4
-            myGraph = parser.addEdge("Z", "A", myGraph);
+            /*myGraph = parser.addEdge("Z", "A", myGraph);
             parser.outputDOTGraph("src/main/resources/output.dot", myGraph);
-            parser.outputGraphics("src/main/resources/output.png", myGraph);
+            parser.outputGraphics("src/main/resources/output.png", myGraph);*/
 
         }
         else{
             System.err.println("!!Exiting due to parsing error!!");
         }
-
     }
 }
