@@ -189,6 +189,160 @@ public class DOTParserTest {
 
     }
 
+    @Test
+    public void testRemoveNodePass(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        String testPath = "/removeNodeTestPass.txt";
+        try {
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            MutableGraph exactGraph = parser.parseGraph(testPath);
+
+
+            testGraph = parser.removeNode("B", testGraph);
+
+            assertEquals(testGraph.nodes().size(), exactGraph.nodes().size());
+            assertEquals(testGraph.edges().size(), exactGraph.edges().size());
+
+            // Compare the nodes and edges individually, ensuring they match
+            for (MutableNode node1 : testGraph.nodes()) {
+                assertTrue(exactGraph.nodes().contains(node1));
+            }
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveNodeFail(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            testGraph = parser.removeNode("Z", testGraph);
+
+            File expectedOutputFile = new File("src/test/resources/removeNodeTestFail.txt");
+            String expectedOutput = new String(Files.readAllBytes(Paths.get(expectedOutputFile.toURI())));
+            String actualOutput = errContent.toString().trim();
+
+            assertEquals(expectedOutput, actualOutput);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveNodesPass(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        String testPath = "/removeNodesTestPass.txt";
+        try {
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            MutableGraph exactGraph = parser.parseGraph(testPath);
+
+            String[] labels = {"B", "F"};
+            testGraph = parser.removeNodes(labels, testGraph);
+
+            assertEquals(testGraph.nodes().size(), exactGraph.nodes().size());
+            assertEquals(testGraph.edges().size(), exactGraph.edges().size());
+
+            // Compare the nodes and edges individually, ensuring they match
+            for (MutableNode node1 : testGraph.nodes()) {
+                assertTrue(exactGraph.nodes().contains(node1));
+            }
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveNodesFail(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        String testPath = "/removeNodesTestPass.txt";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            MutableGraph exactGraph = parser.parseGraph(testPath);
+
+            String[] labels = {"Z", "F", "B"};
+            testGraph = parser.removeNodes(labels, testGraph);
+
+            File expectedOutputFile = new File("src/test/resources/removeNodeTestFail.txt");
+            String expectedOutput = new String(Files.readAllBytes(Paths.get(expectedOutputFile.toURI())));
+            String actualOutput = errContent.toString().trim();
+
+            assertEquals(expectedOutput, actualOutput);
+
+            assertEquals(testGraph.nodes().size(), exactGraph.nodes().size());
+            assertEquals(testGraph.edges().size(), exactGraph.edges().size());
+
+            // Compare the nodes and edges individually, ensuring they match
+            for (MutableNode node1 : testGraph.nodes()) {
+                assertTrue(exactGraph.nodes().contains(node1));
+            }
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveEdgePass(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        String testPath = "/removeEdgeTestPass.txt";
+        try {
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            MutableGraph exactGraph = parser.parseGraph(testPath);
+
+
+            testGraph = parser.removeEdge("B", "C", testGraph);
+
+            assertEquals(testGraph.nodes().size(), exactGraph.nodes().size());
+            assertEquals(testGraph.edges().size(), exactGraph.edges().size());
+
+            // Compare the nodes and edges individually, ensuring they match
+            for (MutableNode node1 : testGraph.nodes()) {
+                assertTrue(exactGraph.nodes().contains(node1));
+            }
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void testRemoveEdgeFail(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/color.dot";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            testGraph = parser.removeEdge("F", "E", testGraph);
+
+            File expectedOutputFile = new File("src/test/resources/removeEdgeTestFail.txt");
+            String expectedOutput = new String(Files.readAllBytes(Paths.get(expectedOutputFile.toURI())));
+            String actualOutput = errContent.toString().trim();
+
+            assertEquals(expectedOutput, actualOutput);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+
+    }
+
+
 
     //This test was build to compare pixel by pixel 2 png files; It works when I run the test
     //on IntelliJ but when I use "mvn package" there is a failure.

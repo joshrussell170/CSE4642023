@@ -1,9 +1,12 @@
-Number of Nodes: 6
-Number of Edges: 5
+Number of Nodes: 9
+Number of Edges: 9
 Nodes and Edge Directions:
-F{}->
-A{}->B::
+A{}->B::,A::
+F{}->E::
+X{}->
+Z{}->A::
 B{}->C::,D::
 C{}->
 D{}->B::
+W{}->X::
 E{}->C::

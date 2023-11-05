@@ -1,3 +1,4 @@
+import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.engine.Format;
 import guru.nidi.graphviz.engine.Graphviz;
 import guru.nidi.graphviz.model.Factory;
@@ -5,12 +6,15 @@ import guru.nidi.graphviz.model.MutableGraph;
 import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.model.Link;
 
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DOTParser {
     public MutableGraph parseGraph(String filePath) {
@@ -206,6 +210,148 @@ public class DOTParser {
         }
     }
 
+    public MutableGraph removeNode(String label, MutableGraph graph) {
+
+        if(graph != null){
+            boolean containsNode = false;
+
+            for(MutableNode node : graph.nodes()){
+                if(node.name().toString().equals(label)){
+                    containsNode = true;
+                }
+            }
+
+            if(containsNode){
+                MutableGraph updatedGraph = Factory.mutGraph().setDirected(true);
+
+                for(MutableNode node : graph.nodes()){
+                    if(!node.name().toString().equals(label)){
+                        addNode(node.name().toString(), updatedGraph);
+                    }
+                }
+
+                for(MutableNode node : graph.nodes()){
+                    for(Link target : node.links()){
+                        if(!target.to().name().toString().equals(label) && !target.from().name().toString().equals(label)){
+                            addEdge(node.name().toString(), target.to().name().toString(), updatedGraph);
+                        }
+                    }
+                }
+
+                return updatedGraph;
+            }
+
+            else{
+                System.err.println("The original graph already doesn't contain the Node " + label);
+                return graph;
+            }
+        }
+
+        else{
+            System.err.println("There is no graph; ensure graph was properly parsed");
+            return null;
+        }
+
+    }
+
+    public MutableGraph removeNodes(String[] label, MutableGraph graph){
+
+        //make a loop for the labels to one by one
+        //then call removeNode() for each label
+        MutableGraph updatedGraph = graph;
+
+        for(String name : label){
+            updatedGraph = removeNode(name, updatedGraph);
+        }
+
+        return updatedGraph;
+    }
+
+    public MutableGraph removeEdge(String srcLabel, String dstLabel, MutableGraph graph){
+
+
+        if(graph != null){
+            boolean srcExists = false;
+            boolean dstExists = false;
+            MutableNode srcNode = null;
+            MutableNode dstNode = null;
+
+            //search for src node
+            //if node exists, search for dst node
+            for(MutableNode node : graph.nodes()){
+                if(node.name().toString().equals(srcLabel)){
+                    srcExists = true;
+                    srcNode = node;
+                }
+                else if(node.name().toString().equals(dstLabel)){
+                    dstExists = true;
+                    dstNode = node;
+                }
+                if(srcExists && dstExists){
+                    break;
+                }
+            }
+
+            if(srcExists && dstExists){
+                boolean linkExists = false;
+                for(Link target : srcNode.links()){
+                    if(target.to().name().toString().equals(dstLabel)){
+                        linkExists = true;
+                    }
+                }
+
+                if(linkExists){
+
+                    MutableGraph updatedGraph = Factory.mutGraph().setDirected(true);
+
+                    for(MutableNode node : graph.nodes()){
+                            addNode(node.name().toString(), updatedGraph);
+                    }
+
+                    for(MutableNode node : graph.nodes()){
+                        if(node.name().toString().equals(srcLabel)){
+                            for(Link target : node.links()){
+                                if(!target.to().name().toString().equals(dstLabel)){
+                                    addEdge(node.name().toString(), target.to().name().toString(), updatedGraph);
+                                }
+                            }
+                        }
+                        else{
+                            for(Link target : node.links()){
+                                addEdge(node.name().toString(), target.to().name().toString(), updatedGraph);
+                            }
+                        }
+
+                    }
+
+                    return updatedGraph;
+                }
+                else{
+                    System.err.println("Edge between " + srcLabel + " and " + dstLabel + " doesn't exist.");
+                    return graph;
+                }
+
+            }
+            else if(srcExists){
+                System.err.println("Source Node Exists but Destination Node doesn't exist");
+                return graph;
+            }
+            else if(dstExists){
+                System.err.println("Destination Node Exists but Source Node doesn't exist");
+                return graph;
+            }
+            else{
+                System.err.println("Neither Node exists within the graph");
+                return graph;
+            }
+        }
+        else{
+            System.err.println("There is no graph; ensure graph was properly parsed");
+            return null;
+        }
+
+    }
+
 
     public static void main(String[] args){
         DOTParser parser = new DOTParser();
@@ -239,6 +385,19 @@ public class DOTParser {
             /*myGraph = parser.addEdge("Z", "A", myGraph);
             parser.outputDOTGraph("src/main/resources/output.dot", myGraph);
             parser.outputGraphics("src/main/resources/output.png", myGraph);*/
+
+            //feature 5
+            /*myGraph = parser.removeNode("Z", myGraph);
+           parser.toStringGraph(myGraph);*/
+
+            //feature 6
+            /*String[] labels = {"B", "F", "Z"};
+            myGraph = parser.removeNodes(labels, myGraph);
+            parser.toStringGraph(myGraph);*/
+
+            //feature 7
+            myGraph = parser.removeEdge("E", "B", myGraph);
+            parser.toStringGraph(myGraph);
 
         }
         else{
