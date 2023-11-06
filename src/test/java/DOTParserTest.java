@@ -342,7 +342,89 @@ public class DOTParserTest {
 
     }
 
+    @Test
+    public void bfsTestPass(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/complex.dot";
+        try {
 
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            DOTParser.Algorithm algo = DOTParser.Algorithm.bfs;
+            Path myPath = parser.GraphSearch("A", "D", algo, testGraph);
+            String actualOutput = myPath.toString();
+
+            File expectedOutputFile = new File("src/test/resources/bfsTestPass.txt");
+            String expectedOutput = new String(Files.readAllBytes(Paths.get(expectedOutputFile.toURI())));
+
+            assertEquals(expectedOutput, actualOutput);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void dfsTestPass(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/complex.dot";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            DOTParser.Algorithm algo = DOTParser.Algorithm.dfs;
+            Path myPath = parser.GraphSearch("A", "D", algo, testGraph);
+            String actualOutput = myPath.toString();
+
+            File expectedOutputFile = new File("src/test/resources/dfsTestPass.txt");
+            String expectedOutput = new String(Files.readAllBytes(Paths.get(expectedOutputFile.toURI())));
+
+            assertEquals(expectedOutput, actualOutput);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void bfsTestFail(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/complex.dot";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            DOTParser.Algorithm algo = DOTParser.Algorithm.dfs;
+            Path myPath = parser.GraphSearch("B", "A", algo, testGraph);
+
+            assertNull(myPath);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
+
+    @Test
+    public void dfsTestFail(){
+        DOTParser parser = new DOTParser();
+        String dotFilePath = "/complex.dot";
+        try {
+
+            MutableGraph testGraph = parser.parseGraph(dotFilePath);
+            DOTParser.Algorithm algo = DOTParser.Algorithm.dfs;
+            Path myPath = parser.GraphSearch("C", "A", algo, testGraph);
+
+            assertNull(myPath);
+
+
+        }
+        catch (Exception e){
+            fail("failed to read the .dot file: " + e.getMessage());
+        }
+    }
 
     //This test was build to compare pixel by pixel 2 png files; It works when I run the test
     //on IntelliJ but when I use "mvn package" there is a failure.

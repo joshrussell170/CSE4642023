@@ -552,7 +552,7 @@ public class DOTParser {
             parser.outputGraphics("src/main/resources/output.png", myGraph);*/
 
             //feature 5
-            /*myGraph = parser.removeNode("Z", myGraph);
+           /*myGraph = parser.removeNode("B", myGraph);
            parser.toStringGraph(myGraph);*/
 
             //feature 6
@@ -561,7 +561,7 @@ public class DOTParser {
             parser.toStringGraph(myGraph);*/
 
             //feature 7
-            /*myGraph = parser.removeEdge("E", "B", myGraph);
+            /*myGraph = parser.removeEdge("B", "C", myGraph);
             parser.toStringGraph(myGraph);*/
 
             //feature 9
@@ -575,14 +575,14 @@ public class DOTParser {
             }*/
 
             //feature 10
-            /*Algorithm myAlgo = Algorithm.bfs;
-            Path myPath = parser.GraphSearch("A", "C", myAlgo, myGraph);
+            Algorithm myAlgo = Algorithm.bfs;
+            Path myPath = parser.GraphSearch("A", "D", myAlgo, myGraph);
             if(myPath != null) {
                 System.out.println(myPath.toString());
             }
             else{
                 System.err.println("Path is null");
-            }*/
+            }
 
 
 
