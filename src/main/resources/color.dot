@@ -13,4 +13,5 @@ digraph G {
     B -> D;
     E -> C;
     D -> B;
+    A -> E;
 }
