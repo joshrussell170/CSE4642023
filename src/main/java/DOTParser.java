@@ -396,8 +396,8 @@ public class DOTParser {
             parser.toStringGraph(myGraph);*/
 
             //feature 7
-            /*myGraph = parser.removeEdge("E", "B", myGraph);
-            parser.toStringGraph(myGraph);*/
+            myGraph = parser.removeEdge("E", "B", myGraph);
+            parser.toStringGraph(myGraph);
 
         }
         else{
