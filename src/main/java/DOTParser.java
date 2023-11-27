@@ -214,18 +214,20 @@ public class DOTParser {
         }
     }
 
+    public boolean findNode(String label, MutableGraph graph){
+        for(MutableNode node : graph.nodes()){
+            if(node.name().toString().equals(label)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public MutableGraph removeNode(String label, MutableGraph graph) {
 
         if(graph != null){
-            boolean containsNode = false;
 
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(label)){
-                    containsNode = true;
-                }
-            }
-
-            if(containsNode){
+            if(findNode(label,graph)){
                 MutableGraph updatedGraph = Factory.mutGraph().setDirected(true);
 
                 for(MutableNode node : graph.nodes()){
@@ -355,7 +357,6 @@ public class DOTParser {
         }
 
     }
-
 
     public Path GraphSearch(String srclabel, String dstLabel, Algorithm algo, MutableGraph graph){
 
@@ -557,14 +558,14 @@ public class DOTParser {
             }*/
 
             //feature 10
-            Algorithm myAlgo = Algorithm.bfs;
+            /*Algorithm myAlgo = Algorithm.bfs;
             Path myPath = parser.GraphSearch("A", "D", myAlgo, myGraph);
             if(myPath != null) {
                 System.out.println(myPath.toString());
             }
             else{
                 System.err.println("Path is null");
-            }
+            }*/
 
 
 
