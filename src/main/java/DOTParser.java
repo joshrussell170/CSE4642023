@@ -275,30 +275,10 @@ public class DOTParser {
 
     public MutableGraph removeEdge(String srcLabel, String dstLabel, MutableGraph graph){
 
-
         if(graph != null){
-            boolean srcExists = false;
-            boolean dstExists = false;
-            MutableNode srcNode = null;
-            MutableNode dstNode = null;
+            MutableNode srcNode = nodesExist(srcLabel, dstLabel, graph);
 
-            //search for src node
-            //if node exists, search for dst node
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(srcLabel)){
-                    srcExists = true;
-                    srcNode = node;
-                }
-                else if(node.name().toString().equals(dstLabel)){
-                    dstExists = true;
-                    dstNode = node;
-                }
-                if(srcExists && dstExists){
-                    break;
-                }
-            }
-
-            if(srcExists && dstExists){
+            if(srcNode != null){
                 boolean linkExists = false;
                 for(Link target : srcNode.links()){
                     if(target.to().name().toString().equals(dstLabel)){
@@ -338,17 +318,8 @@ public class DOTParser {
                 }
 
             }
-            else if(srcExists){
-                System.err.println("Source Node Exists but Destination Node doesn't exist");
-                return graph;
-            }
-            else if(dstExists){
-                System.err.println("Destination Node Exists but Source Node doesn't exist");
-                return graph;
-            }
             else{
-                System.err.println("Neither Node exists within the graph");
-                return graph;
+                return null;
             }
         }
         else{
