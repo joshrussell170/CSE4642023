@@ -126,25 +126,20 @@ public class DOTParser {
         return graph;
     }
 
+    public MutableNode getNode(String label, MutableGraph graph){
+        for(MutableNode node : graph.nodes()){
+            if(node.name().toString().equals(label)){
+                return node;
+            }
+        }
+        return null;
+    }
+
     public MutableGraph addEdge(String srcLabel, String dstLabel, MutableGraph graph){
         if(graph != null){
-            MutableNode srcNode = null;
-            MutableNode dstNode = null;
+            MutableNode srcNode = getNode(srcLabel, graph);
+            MutableNode dstNode = getNode(dstLabel, graph);
 
-            //Check if source or destination label already exist
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(srcLabel)){
-                    srcNode = node;
-                    break;
-                }
-            }
-
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(dstLabel)){
-                    dstNode = node;
-                    break;
-                }
-            }
 
             //if the label doesnt already exist, create it and add to graph
             if(srcNode == null){
