@@ -372,7 +372,7 @@ public class DOTParser {
         return null;
     }
 
-    public Path bfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
+    public MutableNode nodesExist(String srclabel, String dstLabel, MutableGraph graph){
         MutableNode tmpNode = null;
         boolean srcExists = false;
         boolean dstExists = false;
@@ -387,8 +387,33 @@ public class DOTParser {
                 dstExists = true;
             }
         }
-
         if(srcExists && dstExists){
+            return tmpNode;
+        }
+        else{
+            if(srcExists){
+                System.err.println("Source node exists but destination node doesnt");
+                return null;
+            }
+
+            else if(dstExists){
+                System.err.println("Destination node exists but source node doesnt");
+                return null;
+            }
+
+            else{
+                System.err.println("Neither node exists");
+                return null;
+            }
+        }
+
+
+    }
+
+    public Path bfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
+        MutableNode tmpNode = nodesExist(srclabel, dstLabel, graph);
+
+        if(tmpNode != null){
             Map<String, String> parentMap = new HashMap<>();
             Queue<String> queue = new LinkedList<>();
             Set<String> visited = new HashSet<>();
@@ -420,41 +445,13 @@ public class DOTParser {
 
             }
         }
-        else if(srcExists){
-            System.err.println("Source node exists but destination node doesnt");
-            return null;
-        }
-
-        else if(dstExists){
-            System.err.println("Destination node exists but source node doesnt");
-            return null;
-        }
-
-        else{
-            System.err.println("Neither node exists");
-            return null;
-        }
-
         return null;
     }
 
     public Path dfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
-        MutableNode tmpNode = null;
-        boolean srcExists = false;
-        boolean dstExists = false;
+        MutableNode tmpNode = nodesExist(srclabel, dstLabel, graph);
 
-        //check if nodes are in the graph and set the source node
-        for(MutableNode node : graph.nodes()){
-            if(node.name().toString().equals(srclabel)){
-                tmpNode = node;
-                srcExists = true;
-            }
-            if(node.name().toString().equals(dstLabel)){
-                dstExists = true;
-            }
-        }
-
-        if(srcExists && dstExists){
+        if(tmpNode != null){
             Map<String, String> parentMap = new HashMap<>();
             Stack<String> stack = new Stack<>();
             Set<String> visited = new HashSet<>();
@@ -486,21 +483,6 @@ public class DOTParser {
 
             }
         }
-        else if(srcExists){
-            System.err.println("Source node exists but destination node doesnt");
-            return null;
-        }
-
-        else if(dstExists){
-            System.err.println("Destination node exists but source node doesnt");
-            return null;
-        }
-
-        else{
-            System.err.println("Neither node exists");
-            return null;
-        }
-
         return null;
     }
 
