@@ -328,10 +328,12 @@ public class DOTParser {
 
         switch (algo){
             case bfs:
-                return bfsGraphSearch(srclabel, dstLabel, graph);
+                bfsSearch myBFSSearch = new bfsSearch();
+                return myBFSSearch.bfsGraphSearch(srclabel, dstLabel, graph);
 
             case dfs:
-                return dfsGraphSearch(srclabel, dstLabel, graph);
+                dfsSearch myDFSSearch = new dfsSearch();
+                return myDFSSearch.dfsGraphSearch(srclabel, dstLabel, graph);
 
             default:
                 System.err.println("Not a valid algorithm");
@@ -357,114 +359,20 @@ public class DOTParser {
         if(srcExists && dstExists){
             return tmpNode;
         }
-        else{
-            if(srcExists){
+        else {
+            if (srcExists) {
                 System.err.println("Source node exists but destination node doesnt");
                 return null;
-            }
-
-            else if(dstExists){
+            } else if (dstExists) {
                 System.err.println("Destination node exists but source node doesnt");
                 return null;
-            }
-
-            else{
+            } else {
                 System.err.println("Neither node exists");
                 return null;
             }
         }
-
-
     }
 
-    public Path bfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
-        MutableNode tmpNode = nodesExist(srclabel, dstLabel, graph);
-
-        if(tmpNode != null){
-            Map<String, String> parentMap = new HashMap<>();
-            Queue<String> queue = new LinkedList<>();
-            Set<String> visited = new HashSet<>();
-            String neighborStr = null;
-
-            queue.add(srclabel);
-            visited.add(srclabel);
-
-            while(!queue.isEmpty()){
-                String currentNode = queue.poll();
-
-                if(currentNode.equals(dstLabel)){
-                    return reconstructPath(parentMap, srclabel, dstLabel);
-                }
-                for(Link neighbor : tmpNode.links()){
-                    neighborStr = neighbor.to().name().toString();
-                    if(!visited.contains(neighborStr)){
-                        queue.add(neighborStr);
-                        visited.add(neighborStr);
-                        parentMap.put(neighborStr, currentNode);
-                    }
-                }
-                for(MutableNode node : graph.nodes()){
-                    if(node.name().toString().equals(neighborStr)){
-                        tmpNode = node;
-                        break;
-                    }
-                }
-
-            }
-        }
-        return null;
-    }
-
-    public Path dfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
-        MutableNode tmpNode = nodesExist(srclabel, dstLabel, graph);
-
-        if(tmpNode != null){
-            Map<String, String> parentMap = new HashMap<>();
-            Stack<String> stack = new Stack<>();
-            Set<String> visited = new HashSet<>();
-            String neighborStr = null;
-
-            stack.push(srclabel);
-            visited.add(srclabel);
-
-            while(!stack.isEmpty()){
-                String currentNode = stack.pop();
-
-                if(currentNode.equals(dstLabel)){
-                    return reconstructPath(parentMap, srclabel, dstLabel);
-                }
-                for(Link neighbor : tmpNode.links()){
-                    neighborStr = neighbor.to().name().toString();
-                    if(!visited.contains(neighborStr)){
-                        stack.push(neighborStr);
-                        visited.add(neighborStr);
-                        parentMap.put(neighborStr, currentNode);
-                    }
-                }
-                for(MutableNode node : graph.nodes()){
-                    if(node.name().toString().equals(neighborStr)){
-                        tmpNode = node;
-                        break;
-                    }
-                }
-
-            }
-        }
-        return null;
-    }
-
-    public static Path reconstructPath(Map<String, String> parentMap, String startNode, String targetNode) {
-        Path path = new Path();
-        String currentNode = targetNode;
-
-        while (currentNode != null) {
-            path.addNode(currentNode);
-            currentNode = parentMap.get(currentNode);
-        }
-
-        Collections.reverse(path.getNodes());
-        return path;
-    }
 
     public static void main(String[] args){
         DOTParser parser = new DOTParser();
@@ -524,7 +432,7 @@ public class DOTParser {
 
             //feature 10
             /*Algorithm myAlgo = Algorithm.bfs;
-            Path myPath = parser.GraphSearch("A", "D", myAlgo, myGraph);
+            Path myPath = parser.GraphSearch("A", "C", myAlgo, myGraph);
             if(myPath != null) {
                 System.out.println(myPath.toString());
             }
