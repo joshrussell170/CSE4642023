@@ -104,7 +104,7 @@ public class DOTParser {
     public MutableGraph addNode(String label, MutableGraph graph){
         if(graph != null){
             //look for duplicates
-            boolean nodeExists = graph.nodes().stream().anyMatch(node -> node.name().toString().equals(label));
+            boolean nodeExists = findNode(label, graph);
             if(!nodeExists){
                 MutableNode newNode = Factory.mutNode(label);
                 newNode.addTo(graph);
@@ -470,7 +470,6 @@ public class DOTParser {
         Collections.reverse(path.getNodes());
         return path;
     }
-
 
     public static void main(String[] args){
         DOTParser parser = new DOTParser();
