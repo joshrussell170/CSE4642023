@@ -328,12 +328,12 @@ public class DOTParser {
 
         switch (algo){
             case bfs:
-                bfsSearch myBFSSearch = new bfsSearch();
-                return myBFSSearch.bfsGraphSearch(srclabel, dstLabel, graph);
+                Context bfscontext = new Context(new bfsSearch());
+                return bfscontext.executeStrategy(srclabel, dstLabel, graph);
 
             case dfs:
-                dfsSearch myDFSSearch = new dfsSearch();
-                return myDFSSearch.dfsGraphSearch(srclabel, dstLabel, graph);
+                Context dfscontext = new Context(new dfsSearch());
+                return dfscontext.executeStrategy(srclabel, dstLabel, graph);
 
             default:
                 System.err.println("Not a valid algorithm");

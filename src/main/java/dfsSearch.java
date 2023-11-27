@@ -4,8 +4,9 @@ import guru.nidi.graphviz.model.MutableNode;
 
 import java.util.*;
 
-public class dfsSearch extends Search{
-    public Path dfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
+public class dfsSearch extends Search implements Strategy{
+    @Override
+    public Path search(String srclabel, String dstLabel, MutableGraph graph) {
         MutableNode tmpNode = nodesExist(srclabel, dstLabel, graph);
 
         if(tmpNode != null){
