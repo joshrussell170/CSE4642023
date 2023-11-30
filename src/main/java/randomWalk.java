@@ -53,12 +53,19 @@ public class randomWalk extends Search implements Strategy{
 
                 }
 
-                if(tmpPath.nodes.contains(dstLabel)){
-                    tmpPath = utilSearch.search(srclabel, dstLabel, graph);
-                    System.out.print("Visiting Path: ");
-                    System.out.println(tmpPath.toString());
-                    return tmpPath;
+                try{
+                    if(tmpPath.nodes.contains(dstLabel)){
+                        tmpPath = utilSearch.search(srclabel, dstLabel, graph);
+                        System.out.print("Visiting Path: ");
+                        System.out.println(tmpPath.toString());
+                        return tmpPath;
+                    }
                 }
+                catch (Exception e){
+                    System.out.println("There exists no path between nodes");
+                    return null;
+                }
+
 
                 System.out.print("Visiting Path: ");
                 System.out.println(tmpPath.toString());

@@ -435,7 +435,7 @@ public class DOTParser {
 
             //feature 10
             Algorithm myAlgo = Algorithm.random;
-            Path myPath = parser.GraphSearch("a", "d", myAlgo, myGraph);
+            Path myPath = parser.GraphSearch("g", "a", myAlgo, myGraph);
             if(myPath != null) {
                 System.out.print("Path Found: ");
                 System.out.println(myPath.toString());
