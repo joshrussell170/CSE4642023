@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Path {
-    private List<String> nodes;
+    public List<String> nodes;
 
     public Path() {
         nodes = new ArrayList<>();

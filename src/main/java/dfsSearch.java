@@ -20,6 +20,7 @@ public class dfsSearch extends Search implements Strategy{
 
             while(!stack.isEmpty()){
                 String currentNode = stack.pop();
+                tmpNode = moveNode(currentNode, graph);
 
                 Path myPath = returnPathCheck(currentNode, dstLabel, srclabel, parentMap);
                 if(myPath != null){
@@ -34,7 +35,7 @@ public class dfsSearch extends Search implements Strategy{
                         parentMap.put(neighborStr, currentNode);
                     }
                 }
-                tmpNode = moveNode(neighborStr, graph);
+
 
             }
         }

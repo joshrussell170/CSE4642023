@@ -18,7 +18,8 @@ public class DOTParser {
 
     enum Algorithm {
         bfs,
-        dfs
+        dfs,
+        random
     }
 
     public MutableGraph parseGraph(String filePath) {
@@ -334,7 +335,9 @@ public class DOTParser {
             case dfs:
                 Context dfscontext = new Context(new dfsSearch());
                 return dfscontext.executeStrategy(srclabel, dstLabel, graph);
-
+            case random:
+                Context randContext = new Context(new randomWalk());
+                return randContext.executeStrategy(srclabel, dstLabel, graph);
             default:
                 System.err.println("Not a valid algorithm");
         }
@@ -376,7 +379,7 @@ public class DOTParser {
 
     public static void main(String[] args){
         DOTParser parser = new DOTParser();
-        MutableGraph myGraph = parser.parseGraph("/color.dot");
+        MutableGraph myGraph = parser.parseGraph("/test.dot");
         if(myGraph != null){
             //feature 1
             /*parser.toStringGraph(myGraph);
@@ -431,14 +434,15 @@ public class DOTParser {
             }*/
 
             //feature 10
-            /*Algorithm myAlgo = Algorithm.bfs;
-            Path myPath = parser.GraphSearch("A", "C", myAlgo, myGraph);
+            Algorithm myAlgo = Algorithm.random;
+            Path myPath = parser.GraphSearch("a", "d", myAlgo, myGraph);
             if(myPath != null) {
+                System.out.print("Path Found: ");
                 System.out.println(myPath.toString());
             }
             else{
                 System.err.println("Path is null");
-            }*/
+            }
 
 
 
