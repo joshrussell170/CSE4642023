@@ -18,7 +18,8 @@ public class DOTParser {
 
     enum Algorithm {
         bfs,
-        dfs
+        dfs,
+        random
     }
 
     public MutableGraph parseGraph(String filePath) {
@@ -104,7 +105,7 @@ public class DOTParser {
     public MutableGraph addNode(String label, MutableGraph graph){
         if(graph != null){
             //look for duplicates
-            boolean nodeExists = graph.nodes().stream().anyMatch(node -> node.name().toString().equals(label));
+            boolean nodeExists = findNode(label, graph);
             if(!nodeExists){
                 MutableNode newNode = Factory.mutNode(label);
                 newNode.addTo(graph);
@@ -126,25 +127,20 @@ public class DOTParser {
         return graph;
     }
 
+    public MutableNode getNode(String label, MutableGraph graph){
+        for(MutableNode node : graph.nodes()){
+            if(node.name().toString().equals(label)){
+                return node;
+            }
+        }
+        return null;
+    }
+
     public MutableGraph addEdge(String srcLabel, String dstLabel, MutableGraph graph){
         if(graph != null){
-            MutableNode srcNode = null;
-            MutableNode dstNode = null;
+            MutableNode srcNode = getNode(srcLabel, graph);
+            MutableNode dstNode = getNode(dstLabel, graph);
 
-            //Check if source or destination label already exist
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(srcLabel)){
-                    srcNode = node;
-                    break;
-                }
-            }
-
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(dstLabel)){
-                    dstNode = node;
-                    break;
-                }
-            }
 
             //if the label doesnt already exist, create it and add to graph
             if(srcNode == null){
@@ -214,18 +210,20 @@ public class DOTParser {
         }
     }
 
+    public boolean findNode(String label, MutableGraph graph){
+        for(MutableNode node : graph.nodes()){
+            if(node.name().toString().equals(label)){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public MutableGraph removeNode(String label, MutableGraph graph) {
 
         if(graph != null){
-            boolean containsNode = false;
 
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(label)){
-                    containsNode = true;
-                }
-            }
-
-            if(containsNode){
+            if(findNode(label,graph)){
                 MutableGraph updatedGraph = Factory.mutGraph().setDirected(true);
 
                 for(MutableNode node : graph.nodes()){
@@ -273,30 +271,10 @@ public class DOTParser {
 
     public MutableGraph removeEdge(String srcLabel, String dstLabel, MutableGraph graph){
 
-
         if(graph != null){
-            boolean srcExists = false;
-            boolean dstExists = false;
-            MutableNode srcNode = null;
-            MutableNode dstNode = null;
+            MutableNode srcNode = nodesExist(srcLabel, dstLabel, graph);
 
-            //search for src node
-            //if node exists, search for dst node
-            for(MutableNode node : graph.nodes()){
-                if(node.name().toString().equals(srcLabel)){
-                    srcExists = true;
-                    srcNode = node;
-                }
-                else if(node.name().toString().equals(dstLabel)){
-                    dstExists = true;
-                    dstNode = node;
-                }
-                if(srcExists && dstExists){
-                    break;
-                }
-            }
-
-            if(srcExists && dstExists){
+            if(srcNode != null){
                 boolean linkExists = false;
                 for(Link target : srcNode.links()){
                     if(target.to().name().toString().equals(dstLabel)){
@@ -336,17 +314,8 @@ public class DOTParser {
                 }
 
             }
-            else if(srcExists){
-                System.err.println("Source Node Exists but Destination Node doesn't exist");
-                return graph;
-            }
-            else if(dstExists){
-                System.err.println("Destination Node Exists but Source Node doesn't exist");
-                return graph;
-            }
             else{
-                System.err.println("Neither Node exists within the graph");
-                return graph;
+                return null;
             }
         }
         else{
@@ -356,23 +325,26 @@ public class DOTParser {
 
     }
 
-
     public Path GraphSearch(String srclabel, String dstLabel, Algorithm algo, MutableGraph graph){
 
         switch (algo){
             case bfs:
-                return bfsGraphSearch(srclabel, dstLabel, graph);
+                Context bfscontext = new Context(new bfsSearch());
+                return bfscontext.executeStrategy(srclabel, dstLabel, graph);
 
             case dfs:
-                return dfsGraphSearch(srclabel, dstLabel, graph);
-
+                Context dfscontext = new Context(new dfsSearch());
+                return dfscontext.executeStrategy(srclabel, dstLabel, graph);
+            case random:
+                Context randContext = new Context(new randomWalk());
+                return randContext.executeStrategy(srclabel, dstLabel, graph);
             default:
                 System.err.println("Not a valid algorithm");
         }
         return null;
     }
 
-    public Path bfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
+    public MutableNode nodesExist(String srclabel, String dstLabel, MutableGraph graph){
         MutableNode tmpNode = null;
         boolean srcExists = false;
         boolean dstExists = false;
@@ -387,140 +359,27 @@ public class DOTParser {
                 dstExists = true;
             }
         }
-
         if(srcExists && dstExists){
-            Map<String, String> parentMap = new HashMap<>();
-            Queue<String> queue = new LinkedList<>();
-            Set<String> visited = new HashSet<>();
-            String neighborStr = null;
-
-            queue.add(srclabel);
-            visited.add(srclabel);
-
-            while(!queue.isEmpty()){
-                String currentNode = queue.poll();
-
-                if(currentNode.equals(dstLabel)){
-                    return reconstructPath(parentMap, srclabel, dstLabel);
-                }
-                for(Link neighbor : tmpNode.links()){
-                    neighborStr = neighbor.to().name().toString();
-                    if(!visited.contains(neighborStr)){
-                        queue.add(neighborStr);
-                        visited.add(neighborStr);
-                        parentMap.put(neighborStr, currentNode);
-                    }
-                }
-                for(MutableNode node : graph.nodes()){
-                    if(node.name().toString().equals(neighborStr)){
-                        tmpNode = node;
-                        break;
-                    }
-                }
-
+            return tmpNode;
+        }
+        else {
+            if (srcExists) {
+                System.err.println("Source node exists but destination node doesnt");
+                return null;
+            } else if (dstExists) {
+                System.err.println("Destination node exists but source node doesnt");
+                return null;
+            } else {
+                System.err.println("Neither node exists");
+                return null;
             }
         }
-        else if(srcExists){
-            System.err.println("Source node exists but destination node doesnt");
-            return null;
-        }
-
-        else if(dstExists){
-            System.err.println("Destination node exists but source node doesnt");
-            return null;
-        }
-
-        else{
-            System.err.println("Neither node exists");
-            return null;
-        }
-
-        return null;
-    }
-
-    public Path dfsGraphSearch(String srclabel, String dstLabel, MutableGraph graph){
-        MutableNode tmpNode = null;
-        boolean srcExists = false;
-        boolean dstExists = false;
-
-        //check if nodes are in the graph and set the source node
-        for(MutableNode node : graph.nodes()){
-            if(node.name().toString().equals(srclabel)){
-                tmpNode = node;
-                srcExists = true;
-            }
-            if(node.name().toString().equals(dstLabel)){
-                dstExists = true;
-            }
-        }
-
-        if(srcExists && dstExists){
-            Map<String, String> parentMap = new HashMap<>();
-            Stack<String> stack = new Stack<>();
-            Set<String> visited = new HashSet<>();
-            String neighborStr = null;
-
-            stack.push(srclabel);
-            visited.add(srclabel);
-
-            while(!stack.isEmpty()){
-                String currentNode = stack.pop();
-
-                if(currentNode.equals(dstLabel)){
-                    return reconstructPath(parentMap, srclabel, dstLabel);
-                }
-                for(Link neighbor : tmpNode.links()){
-                    neighborStr = neighbor.to().name().toString();
-                    if(!visited.contains(neighborStr)){
-                        stack.push(neighborStr);
-                        visited.add(neighborStr);
-                        parentMap.put(neighborStr, currentNode);
-                    }
-                }
-                for(MutableNode node : graph.nodes()){
-                    if(node.name().toString().equals(neighborStr)){
-                        tmpNode = node;
-                        break;
-                    }
-                }
-
-            }
-        }
-        else if(srcExists){
-            System.err.println("Source node exists but destination node doesnt");
-            return null;
-        }
-
-        else if(dstExists){
-            System.err.println("Destination node exists but source node doesnt");
-            return null;
-        }
-
-        else{
-            System.err.println("Neither node exists");
-            return null;
-        }
-
-        return null;
-    }
-
-    public static Path reconstructPath(Map<String, String> parentMap, String startNode, String targetNode) {
-        Path path = new Path();
-        String currentNode = targetNode;
-
-        while (currentNode != null) {
-            path.addNode(currentNode);
-            currentNode = parentMap.get(currentNode);
-        }
-
-        Collections.reverse(path.getNodes());
-        return path;
     }
 
 
     public static void main(String[] args){
         DOTParser parser = new DOTParser();
-        MutableGraph myGraph = parser.parseGraph("/color.dot");
+        MutableGraph myGraph = parser.parseGraph("/test.dot");
         if(myGraph != null){
             //feature 1
             /*parser.toStringGraph(myGraph);
@@ -575,9 +434,10 @@ public class DOTParser {
             }*/
 
             //feature 10
-            Algorithm myAlgo = Algorithm.bfs;
-            Path myPath = parser.GraphSearch("A", "D", myAlgo, myGraph);
+            Algorithm myAlgo = Algorithm.random;
+            Path myPath = parser.GraphSearch("g", "a", myAlgo, myGraph);
             if(myPath != null) {
+                System.out.print("Path Found: ");
                 System.out.println(myPath.toString());
             }
             else{
